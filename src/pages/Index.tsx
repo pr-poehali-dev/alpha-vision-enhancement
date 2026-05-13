@@ -1,12 +1,22 @@
 import { Shader, ChromaFlow, Swirl } from "shaders/react"
 import { CustomCursor } from "@/components/custom-cursor"
 import { GrainOverlay } from "@/components/grain-overlay"
-import { WorkSection } from "@/components/sections/work-section"
-import { ServicesSection } from "@/components/sections/services-section"
-import { AboutSection } from "@/components/sections/about-section"
-import { ContactSection } from "@/components/sections/contact-section"
 import { MagneticButton } from "@/components/magnetic-button"
+import { TimelineSection } from "@/components/sections/timeline-section"
+import { TraditionsSection } from "@/components/sections/traditions-section"
+import { InitiativesSection } from "@/components/sections/initiatives-section"
+import { PedagogySection } from "@/components/sections/pedagogy-section"
+import { ContactSection } from "@/components/sections/contact-section"
 import { useRef, useEffect, useState } from "react"
+
+const NAV_ITEMS = [
+  "Главная",
+  "Деятели культуры",
+  "Традиции народов",
+  "Гражданские инициативы",
+  "Семье и педагогам",
+  "Контакты",
+]
 
 export default function Index() {
   const scrollContainerRef = useRef<HTMLDivElement>(null)
@@ -77,7 +87,7 @@ export default function Index() {
       const deltaX = touchStartX.current - touchEndX
 
       if (Math.abs(deltaY) > Math.abs(deltaX) && Math.abs(deltaY) > 50) {
-        if (deltaY > 0 && currentSection < 4) {
+        if (deltaY > 0 && currentSection < NAV_ITEMS.length - 1) {
           scrollToSection(currentSection + 1)
         } else if (deltaY < 0 && currentSection > 0) {
           scrollToSection(currentSection - 1)
@@ -147,7 +157,7 @@ export default function Index() {
         const scrollLeft = scrollContainerRef.current.scrollLeft
         const newSection = Math.round(scrollLeft / sectionWidth)
 
-        if (newSection !== currentSection && newSection >= 0 && newSection <= 4) {
+        if (newSection !== currentSection && newSection >= 0 && newSection <= NAV_ITEMS.length - 1) {
           setCurrentSection(newSection)
         }
 
@@ -182,10 +192,10 @@ export default function Index() {
       >
         <Shader className="h-full w-full">
           <Swirl
-            colorA="#1275d8"
-            colorB="#e19136"
-            speed={0.8}
-            detail={0.8}
+            colorA="#7c3d1a"
+            colorB="#c8a45a"
+            speed={0.5}
+            detail={0.7}
             blend={50}
             coarseX={40}
             coarseY={40}
@@ -195,23 +205,24 @@ export default function Index() {
             fineY={40}
           />
           <ChromaFlow
-            baseColor="#0066ff"
-            upColor="#0066ff"
-            downColor="#d1d1d1"
-            leftColor="#e19136"
-            rightColor="#e19136"
-            intensity={0.9}
+            baseColor="#4a2c0a"
+            upColor="#8b5e3c"
+            downColor="#1a0f05"
+            leftColor="#c8a45a"
+            rightColor="#6b3a1f"
+            intensity={0.85}
             radius={1.8}
             momentum={25}
             maskType="alpha"
             opacity={0.97}
           />
         </Shader>
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="absolute inset-0 bg-black/30" />
       </div>
 
+      {/* Navigation */}
       <nav
-        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-6 transition-opacity duration-700 md:px-12 ${
+        className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-6 py-5 transition-opacity duration-700 md:px-12 ${
           isLoaded ? "opacity-100" : "opacity-0"
         }`}
       >
@@ -220,18 +231,20 @@ export default function Index() {
           className="flex items-center gap-2 transition-transform hover:scale-105"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-foreground/15 backdrop-blur-md transition-all duration-300 hover:scale-110 hover:bg-foreground/25">
-            <span className="font-sans text-xl font-bold text-foreground">F</span>
+            <span className="font-sans text-lg font-bold text-foreground">КН</span>
           </div>
-          <span className="font-sans text-xl font-semibold tracking-tight text-foreground">Flowrise</span>
+          <span className="hidden font-sans text-base font-semibold tracking-tight text-foreground sm:block">
+            Культурное наследие
+          </span>
         </button>
 
-        <div className="hidden items-center gap-8 md:flex">
-          {["Главная", "Работы", "Услуги", "О нас", "Контакты"].map((item, index) => (
+        <div className="hidden items-center gap-5 lg:flex">
+          {NAV_ITEMS.map((item, index) => (
             <button
               key={item}
               onClick={() => scrollToSection(index)}
-              className={`group relative font-sans text-sm font-medium transition-colors ${
-                currentSection === index ? "text-foreground" : "text-foreground/80 hover:text-foreground"
+              className={`group relative font-sans text-xs font-medium transition-colors ${
+                currentSection === index ? "text-foreground" : "text-foreground/70 hover:text-foreground"
               }`}
             >
               {item}
@@ -245,51 +258,79 @@ export default function Index() {
         </div>
 
         <MagneticButton variant="secondary" onClick={() => scrollToSection(4)}>
-          Начать
+          Педагогам
         </MagneticButton>
       </nav>
 
+      {/* Horizontal scroll container */}
       <div
         ref={scrollContainerRef}
-        data-scroll-container
-        className={`relative z-10 flex h-screen overflow-x-auto overflow-y-hidden transition-opacity duration-700 ${
-          isLoaded ? "opacity-100" : "opacity-0"
-        }`}
-        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+        className="flex h-full w-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth"
+        style={{ scrollbarWidth: "none" }}
       >
         {/* Hero Section */}
         <section className="flex min-h-screen w-screen shrink-0 flex-col justify-end px-6 pb-16 pt-24 md:px-12 md:pb-24">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <div className="mb-4 inline-block animate-in fade-in slide-in-from-bottom-4 rounded-full border border-foreground/20 bg-foreground/15 px-4 py-1.5 backdrop-blur-md duration-700">
-              <p className="font-mono text-xs text-foreground/90">Современные технологии</p>
+              <p className="font-mono text-xs text-foreground/90">Образовательный проект России</p>
             </div>
-            <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-6xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-7xl lg:text-8xl">
+            <h1 className="mb-6 animate-in fade-in slide-in-from-bottom-8 font-sans text-5xl font-light leading-[1.1] tracking-tight text-foreground duration-1000 md:text-7xl lg:text-8xl">
               <span className="text-balance">
-                Цифровое будущее
+                Культурное
+                <br />
+                <span className="text-foreground/50">наследие</span>
               </span>
             </h1>
-            <p className="mb-8 max-w-xl animate-in fade-in slide-in-from-bottom-4 text-lg leading-relaxed text-foreground/90 duration-1000 delay-200 md:text-xl">
-              <span className="text-pretty">
-                Создаем современные веб-приложения и цифровые продукты, которые помогают бизнесу расти и развиваться.
-              </span>
+            <p className="mb-10 max-w-2xl animate-in fade-in slide-in-from-bottom-4 text-base leading-relaxed text-foreground/85 duration-1000 delay-200 md:text-xl">
+              Сохраняем и передаём богатство российской культуры: деятелей, традиции народов и гражданские инициативы — для каждого поколения.
             </p>
-            <div className="flex animate-in fade-in slide-in-from-bottom-4 flex-col gap-4 duration-1000 delay-300 sm:flex-row sm:items-center">
-              <MagneticButton
-                size="lg"
-                variant="primary"
-                onClick={() => scrollToSection(4)}
-              >
-                Обсудить проект
-              </MagneticButton>
-              <MagneticButton size="lg" variant="secondary" onClick={() => scrollToSection(2)}>
-                Наши услуги
-              </MagneticButton>
+
+            {/* Three main blocks */}
+            <div className="mb-8 grid animate-in fade-in slide-in-from-bottom-4 gap-3 duration-1000 delay-300 sm:grid-cols-3">
+              {[
+                {
+                  title: "Деятели культуры и их свершения",
+                  desc: "Временная шкала великих имён",
+                  section: 1,
+                  icon: "🏛️",
+                },
+                {
+                  title: "Традиции народов России",
+                  desc: "Интерактивная карта культур",
+                  section: 2,
+                  icon: "🗺️",
+                },
+                {
+                  title: "Гражданские инициативы",
+                  desc: "Проекты, меняющие жизнь",
+                  section: 3,
+                  icon: "🤝",
+                },
+              ].map((block) => (
+                <button
+                  key={block.section}
+                  onClick={() => scrollToSection(block.section)}
+                  className="group relative overflow-hidden rounded-xl border border-foreground/20 bg-foreground/10 p-5 text-left backdrop-blur-md transition-all duration-300 hover:bg-foreground/20 hover:border-foreground/40 hover:scale-[1.02]"
+                >
+                  <div className="mb-3 text-2xl">{block.icon}</div>
+                  <h3 className="mb-1 font-sans text-sm font-semibold leading-snug text-foreground">{block.title}</h3>
+                  <p className="font-mono text-xs text-foreground/60">{block.desc}</p>
+                  <div className="absolute bottom-3 right-3 translate-x-2 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100">
+                    <span className="font-mono text-xs text-foreground/70">→</span>
+                  </div>
+                </button>
+              ))}
             </div>
+
+            <p className="max-w-xl animate-in fade-in slide-in-from-bottom-4 font-mono text-xs leading-relaxed text-foreground/60 duration-1000 delay-400">
+              Миссия проекта — объединить образовательные материалы о российской культуре, сохранить память о великих
+              людях и живых традициях народов страны, вдохновить граждан на культурные инициативы.
+            </p>
           </div>
 
           <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-in fade-in duration-1000 delay-500">
             <div className="flex items-center gap-2">
-              <p className="font-mono text-xs text-foreground/80">Листайте вправо</p>
+              <p className="font-mono text-xs text-foreground/70">Листайте вправо</p>
               <div className="flex h-6 w-12 items-center justify-center rounded-full border border-foreground/20 bg-foreground/15 backdrop-blur-md">
                 <div className="h-2 w-2 animate-pulse rounded-full bg-foreground/80" />
               </div>
@@ -297,9 +338,10 @@ export default function Index() {
           </div>
         </section>
 
-        <WorkSection />
-        <ServicesSection />
-        <AboutSection scrollToSection={scrollToSection} />
+        <TimelineSection />
+        <TraditionsSection />
+        <InitiativesSection scrollToSection={scrollToSection} />
+        <PedagogySection />
         <ContactSection />
       </div>
 
